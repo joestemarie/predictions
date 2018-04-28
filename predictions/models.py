@@ -15,7 +15,6 @@ class Prediction(models.Model):
     """Main object for predictions made by users."""
     user = models.ForeignKey(User)
     description = models.CharField(max_length=250)
-    standard = models.CharField(max_length=250)
     tags = models.ManyToManyField(PredictionTag, null=True)
     status = models.CharField(max_length=100)
     horizon = models.DateTimeField()
