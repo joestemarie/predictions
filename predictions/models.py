@@ -12,6 +12,9 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     slack_id = models.CharField(max_length=100)
 
+    def __str__(self):
+        return(self.user.username+ " (Profile)")
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -24,7 +27,8 @@ def save_user_profile(sender, instance, **kwargs):
 class PredictionTag(models.Model):
     """Quick tag object so we can look at different kinds of predictions."""
     name = models.CharField(max_length=200)
-
+    def __str__(self):
+        return(self.name)
 
 class Prediction(models.Model):
     """Main object for predictions made by users."""
@@ -33,3 +37,6 @@ class Prediction(models.Model):
     tags = models.ManyToManyField(PredictionTag, null=True)
     status = models.CharField(max_length=100)
     horizon = models.DateTimeField()
+
+    def __str__(self):
+        return '%s - %s' % (self.user.username, self.description)
