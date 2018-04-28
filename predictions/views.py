@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 # import models
 from django.contrib.auth.models import User
-from models import Profile, Prediction
+from models import Profile, Prediction, PredictionTag
 
 # import helpers
 from helpers import is_request_valid, parse_prediction
@@ -33,6 +33,11 @@ def test_slack_json(request):
         horizon = parsed["horizon"]
     )
     this_prediction.save()
+
+    # loop through tags and assign them as appropriate
+    for tag in parsed["tags"]:
+        this_tag, created = PredictionTag.objects.get_or_create(name = tag)
+        this_prediction.tags.add(this_tag)
 
     # write back to the user
     response_text = "You predicted that:\n" +\
