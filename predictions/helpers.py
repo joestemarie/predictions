@@ -2,7 +2,7 @@ import os
 import dateparser
 import re
 
-def is_request_valid(request):
+def slack_request_valid(request):
     if hasattr(request, 'form'):
         return False
 

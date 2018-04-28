@@ -12,12 +12,14 @@ from django.contrib.auth.models import User
 from models import Profile, Prediction, PredictionTag
 
 # import helpers
-from helpers import is_request_valid, parse_prediction
+from helpers import slack_request_valid, parse_prediction
+import datetime
+import os
 
 
 @csrf_exempt
 def test_slack_json(request):
-    if not is_request_valid(request):
+    if not slack_request_valid(request):
         return HttpResponseBadRequest()
 
     request_text = request.POST.get("text")
@@ -49,3 +51,30 @@ def test_slack_json(request):
         "response_type": 'in_channel',
         "text": response_text
         })
+
+
+def api_predictions_for_notification(request):
+    if not request.META.get("HTTP_SECRET_KEY"):
+        return HttpResponseBadRequest()
+    if not request.META.get("HTTP_SECRET_KEY") == os.environ['PREDICTIONS_API_KEY']:
+        return HttpResponse('Your secret key is bad and you should feel bad', status=401)
+    # set a datetime window of 5 minutes so we're only looking at this iteration
+    window_start = datetime.datetime.now()
+    window_end = window_start + datetime.timedelta(0,300)
+
+    # get all the predictions in that window that haven't been evaluated
+    these_predictions = Prediction.objects.filter(
+        status = "Awaiting Evaluation",
+        horizon__range = (window_start, window_end)
+        )
+
+    output = []
+    for prediction in these_predictions:
+        output.append({
+            "slack_id": prediction.user.profile.slack_id,
+            "description": prediction.description,
+            "horizon": prediction.horizon,
+            "prediction_id": prediction.id
+        })
+
+    return JsonResponse(output, safe = False)
