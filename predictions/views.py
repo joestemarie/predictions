@@ -53,6 +53,10 @@ def test_slack_json(request):
         })
 
 
+def slack_message_action(request):
+    # TODO: use the callback ID to parse out that this is a confirmation and then go ahead and
+    # mark that prediction based on the status
+
 def api_predictions_for_notification(request):
     if not request.META.get("HTTP_SECRET_KEY"):
         return HttpResponseBadRequest()
