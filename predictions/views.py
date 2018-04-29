@@ -15,6 +15,7 @@ from models import Profile, Prediction, PredictionTag
 from helpers import slack_request_valid, parse_prediction
 import datetime
 import os
+import json
 
 
 @csrf_exempt
@@ -53,9 +54,31 @@ def test_slack_json(request):
         })
 
 
+@csrf_exempt
 def slack_message_action(request):
     # TODO: use the callback ID to parse out that this is a confirmation and then go ahead and
     # mark that prediction based on the status
+    payload = request.POST.get('payload')
+    parsed_payload = json.loads(payload)
+
+    # identify the prediction based on the callback_id
+    prediction_id = parsed_payload["callback_id"].replace("prediction_", "")
+    this_prediction = Prediction.objects.get(id=prediction_id)
+
+    # go parse out the action so we know what to do
+    actions = parsed_payload["actions"][0]
+
+    print(actions)
+
+    if actions['name'] == "prediction_yes":
+        print("Prediction right!")
+        this_prediction.status = "Evaluated - Right"
+    elif actions['name'] == "prediction_no":
+        print("Prediction wrong!")
+        this_prediction.status = "Evaluated - Wrong"
+
+    this_prediction.save()
+    return HttpResponse('')
 
 def api_predictions_for_notification(request):
     if not request.META.get("HTTP_SECRET_KEY"):
