@@ -78,7 +78,7 @@ def slack_message_action(request):
         this_prediction.status = "Evaluated - Wrong"
 
     this_prediction.save()
-    return HttpResponse('')
+    return HttpResponse(':ballot_box_with_check: Your prediction has been evaluated.')
 
 def api_predictions_for_notification(request):
     if not request.META.get("HTTP_SECRET_KEY"):
