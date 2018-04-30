@@ -4,6 +4,9 @@ This app uses Slack to track predictions made over time and measure how well I p
 The basic flow looks like this:
 ![preview of flow](https://www.dropbox.com/s/ge69c5tsfxmww7u/Screenshot%202018-04-28%2012.46.26.png?dl=0&raw=1 "Text")
 
+Then, later, it will remind you to mark your prediction as correct or not:
+![preview of evaluation](https://www.dropbox.com/s/k7oy6nigor268zp/Screenshot%202018-04-30%2011.54.39.png?dl=0&raw=1 "Text")
+
 The app runs on Django (one day, I'll build a web app interface to build dashboards with) and Slack.
 
 ## Background Tasks
