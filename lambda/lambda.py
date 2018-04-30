@@ -1,6 +1,5 @@
 from slackclient import SlackClient
 import requests
-import os
 
 def send_reminder(slack_client, reminder_dict):
     # build interactive message
@@ -41,9 +40,14 @@ def get_reminders(secret_key):
     r = requests.get(url, headers = headers)
     return(eval(r.text))
 
-slack_token = os.environ["SLACK_TOKEN"]
-sc = SlackClient(slack_token)
-reminders = get_reminders(os.environ['SECRET_KEY'])
 
-for reminder in reminders:
-    send_reminder(sc, reminder)
+
+def handler(event, context):
+    slack_token = os.environ["SLACK_TOKEN"]
+    sc = SlackClient(slack_token)
+    reminders = get_reminders(os.environ['SECRET_KEY'])
+
+    for reminder in reminders:
+        send_reminder(sc, reminder)
+        print(reminder)
+    return 'Hello from Lambda'

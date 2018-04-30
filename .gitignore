@@ -2,3 +2,5 @@
 .DS_Store
 lambdaenv
 *.sqlite3
+lambdabuild
+lambdabuild.zip
